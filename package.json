@@ -1,0 +1,19 @@
+{
+  "name": "mac-calendar-mcp",
+  "version": "0.1.0",
+  "license": "MIT",
+  "description": "Local MCP server for reading events from macOS Calendar",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.29.0",
+    "zod": "4.4.3"
+  }
+}
