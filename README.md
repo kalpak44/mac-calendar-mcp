@@ -1,6 +1,6 @@
 # mac-calendar-mcp
 
-JavaScript-based MCP server for macOS Calendar.
+Node.js MCP server for macOS Calendar, backed by a Swift EventKit helper.
 
 ## Purpose
 
@@ -15,20 +15,24 @@ This project is a local MCP server that allows AI assistants to read events from
 
 - macOS with Calendar app configured
 - Node.js 20+
+- Swift 6+ available via the `swift` command
 - Calendar access permission granted to the terminal or the MCP host application
 
 macOS will prompt for Calendar access on first use. You can verify or revoke permissions in **System Settings → Privacy & Security → Calendars**.
 
 ## Install
 
-Download the latest release into `~/.mcp-servers/mac-calendar-mcp`:
+Download and extract the latest release into `~/.mcp-servers`:
 
 ```bash
-mkdir -p ~/.mcp-servers/mac-calendar-mcp && \
+mkdir -p ~/.mcp-servers && \
 curl -fL \
   -H "Cache-Control: no-cache" \
-  https://github.com/kalpak44/mac-calendar-mcp/releases/latest/download/index.js \
-  --output ~/.mcp-servers/mac-calendar-mcp/index.js
+  https://github.com/kalpak44/mac-calendar-mcp/releases/latest/download/mac-calendar-mcp.zip \
+  --output ~/.mcp-servers/mac-calendar-mcp.zip && \
+rm -rf ~/.mcp-servers/mac-calendar-mcp && \
+unzip -q ~/.mcp-servers/mac-calendar-mcp.zip -d ~/.mcp-servers && \
+rm ~/.mcp-servers/mac-calendar-mcp.zip
 ```
 
 ## Add To Claude Code
@@ -87,4 +91,4 @@ What meetings do I have between May 15 and May 20?
 
 ## Privacy
 
-All data is read locally via AppleScript. No network requests are made. No credentials are required. Events are only passed to the MCP client that initiated the request.
+All data is read locally via EventKit through a bundled Swift helper. No network requests are made. No credentials are required. Events are only passed to the MCP client that initiated the request.

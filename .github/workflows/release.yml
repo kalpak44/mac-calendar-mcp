@@ -36,4 +36,4 @@ jobs:
         with:
           tag_name: v${{ steps.pkg.outputs.version }}
           name: ${{ steps.pkg.outputs.name }} v${{ steps.pkg.outputs.version }}
-          files: dist/index.js
+          files: release/mac-calendar-mcp.zip

@@ -6,12 +6,13 @@
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
-    "build": "webpack",
+    "build": "node scripts/build-release.mjs",
     "start": "node src/index.js",
     "dev": "node --watch src/index.js"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=20.0.0",
+    "swift": ">=6.0.0"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.29.0",

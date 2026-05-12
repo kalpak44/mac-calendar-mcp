@@ -1,51 +1,54 @@
 import { execFile } from "node:child_process";
+import { existsSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
 
 const execFileAsync = promisify(execFile);
 const MAX_RANGE_MS = 90 * 24 * 60 * 60 * 1000;
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+function resolveCalendarQueryScript() {
+  const candidates = [
+    resolve(__dirname, "calendar-query.swift"),
+    resolve(__dirname, "../scripts/calendar-query.swift")
+  ];
+
+  const scriptPath = candidates.find((candidate) => existsSync(candidate));
+
+  if (!scriptPath) {
+    throw new Error("Unable to locate calendar-query.swift");
+  }
+
+  return scriptPath;
+}
+
+function toIsoOffsetString(date) {
+  const pad = (value) => String(Math.abs(value)).padStart(2, "0");
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+  const offsetMinutes = -date.getTimezoneOffset();
+  const sign = offsetMinutes >= 0 ? "+" : "-";
+  const offsetHours = pad(Math.floor(Math.abs(offsetMinutes) / 60));
+  const remainingMinutes = pad(Math.abs(offsetMinutes) % 60);
+
+  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${sign}${offsetHours}:${remainingMinutes}`;
+}
 
 export async function fetchEvents(start, end) {
   const cappedEnd = new Date(Math.min(end.getTime(), start.getTime() + MAX_RANGE_MS));
-
-  const script = `
-    ObjC.import('EventKit');
-    ObjC.import('Foundation');
-
-    var status = $.EKEventStore.authorizationStatusForEntityType(0);
-    if (status === 4) {
-      throw new Error('Calendar access is Write Only. Change to Full Access in System Settings → Privacy & Security → Calendars.');
-    }
-    if (status !== 3) {
-      throw new Error('Calendar access not authorized (status: ' + status + '). Grant Full Access in System Settings → Privacy & Security → Calendars.');
-    }
-
-    var store = $.EKEventStore.alloc.init;
-    var startDate = $.NSDate.dateWithTimeIntervalSince1970(${start.getTime() / 1000});
-    var endDate = $.NSDate.dateWithTimeIntervalSince1970(${cappedEnd.getTime() / 1000});
-    var predicate = store.predicateForEventsWithStartDateEndDateCalendars(startDate, endDate, null);
-    var events = store.eventsMatchingPredicate(predicate);
-
-    var result = [];
-    var count = events.count;
-    for (var i = 0; i < count; i++) {
-      try {
-        var ev = events.objectAtIndex(i);
-        result.push({
-          id: ObjC.unwrap(ev.eventIdentifier),
-          title: ObjC.unwrap(ev.title),
-          start: new Date(ev.startDate.timeIntervalSince1970 * 1000).toISOString(),
-          end: new Date(ev.endDate.timeIntervalSince1970 * 1000).toISOString(),
-          allDay: !!ev.isAllDay,
-          location: ev.location ? ObjC.unwrap(ev.location) : null,
-          notes: ev.notes ? ObjC.unwrap(ev.notes) : null,
-          calendar: ObjC.unwrap(ev.calendar.title)
-        });
-      } catch (e) {}
-    }
-    JSON.stringify(result);
-  `;
-
-  const { stdout } = await execFileAsync("osascript", ["-l", "JavaScript", "-e", script]);
+  const scriptPath = resolveCalendarQueryScript();
+  const { stdout } = await execFileAsync("swift", [
+    scriptPath,
+    "--start",
+    toIsoOffsetString(start),
+    "--end",
+    toIsoOffsetString(cappedEnd)
+  ]);
   return JSON.parse(stdout.trim());
 }
 
