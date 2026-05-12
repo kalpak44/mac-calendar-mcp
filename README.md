@@ -56,19 +56,6 @@ Remove it from Codex:
 codex mcp remove mac-calendar-mcp
 ```
 
-## Configuration (`claude_desktop_config.json`)
-
-```json
-{
-  "mcpServers": {
-    "mac-calendar-mcp": {
-      "command": "node",
-      "args": ["/Users/YOUR_USERNAME/.mcp-servers/mac-calendar-mcp/index.js"]
-    }
-  }
-}
-```
-
 ## Available Tools
 
 | Tool | Description |
