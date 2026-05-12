@@ -2,36 +2,46 @@ import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 
 const execFileAsync = promisify(execFile);
+const MAX_RANGE_MS = 90 * 24 * 60 * 60 * 1000;
 
 export async function fetchEvents(start, end) {
+  const cappedEnd = new Date(Math.min(end.getTime(), start.getTime() + MAX_RANGE_MS));
+
   const script = `
-    var cal = Application("Calendar");
-    var start = new Date(${start.getTime()});
-    var end = new Date(${end.getTime()});
+    ObjC.import('EventKit');
+    ObjC.import('Foundation');
+
+    var status = $.EKEventStore.authorizationStatusForEntityType(0);
+    if (status === 4) {
+      throw new Error('Calendar access is Write Only. Change to Full Access in System Settings → Privacy & Security → Calendars.');
+    }
+    if (status !== 3) {
+      throw new Error('Calendar access not authorized (status: ' + status + '). Grant Full Access in System Settings → Privacy & Security → Calendars.');
+    }
+
+    var store = $.EKEventStore.alloc.init;
+    var startDate = $.NSDate.dateWithTimeIntervalSince1970(${start.getTime() / 1000});
+    var endDate = $.NSDate.dateWithTimeIntervalSince1970(${cappedEnd.getTime() / 1000});
+    var predicate = store.predicateForEventsWithStartDateEndDateCalendars(startDate, endDate, null);
+    var events = store.eventsMatchingPredicate(predicate);
+
     var result = [];
-    cal.calendars().forEach(function(calendar) {
+    var count = events.count;
+    for (var i = 0; i < count; i++) {
       try {
-        var events = calendar.events.whose({
-          startDate: { _greaterThanEquals: start }
-        })();
-        events.forEach(function(event) {
-          try {
-            var eventStart = event.startDate();
-            if (eventStart > end) return;
-            result.push({
-              id: event.uid(),
-              title: event.summary(),
-              start: eventStart.toISOString(),
-              end: event.endDate().toISOString(),
-              allDay: event.allDayEvent(),
-              location: event.location() || null,
-              notes: event.description() || null,
-              calendar: calendar.name()
-            });
-          } catch (e) {}
+        var ev = events.objectAtIndex(i);
+        result.push({
+          id: ObjC.unwrap(ev.eventIdentifier),
+          title: ObjC.unwrap(ev.title),
+          start: new Date(ev.startDate.timeIntervalSince1970 * 1000).toISOString(),
+          end: new Date(ev.endDate.timeIntervalSince1970 * 1000).toISOString(),
+          allDay: !!ev.isAllDay,
+          location: ev.location ? ObjC.unwrap(ev.location) : null,
+          notes: ev.notes ? ObjC.unwrap(ev.notes) : null,
+          calendar: ObjC.unwrap(ev.calendar.title)
         });
       } catch (e) {}
-    });
+    }
     JSON.stringify(result);
   `;
 

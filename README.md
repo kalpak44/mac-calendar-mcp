@@ -25,8 +25,10 @@ Download the latest release into `~/.mcp-servers/mac-calendar-mcp`:
 
 ```bash
 mkdir -p ~/.mcp-servers/mac-calendar-mcp && \
-  curl -fsSL https://github.com/kalpak44/mac-calendar-mcp/releases/latest/download/index.js \
-    -o ~/.mcp-servers/mac-calendar-mcp/index.js
+curl -fL \
+  -H "Cache-Control: no-cache" \
+  https://github.com/kalpak44/mac-calendar-mcp/releases/latest/download/index.js \
+  --output ~/.mcp-servers/mac-calendar-mcp/index.js
 ```
 
 ## Add To Claude Code
