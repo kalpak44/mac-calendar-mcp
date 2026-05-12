@@ -8,8 +8,21 @@ const execFileAsync = promisify(execFile);
 const MAX_RANGE_MS = 90 * 24 * 60 * 60 * 1000;
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
+function runtimeBaseDir() {
+  const mainScript = process.argv[1];
+
+  if (mainScript && mainScript !== "-e" && existsSync(mainScript)) {
+    return dirname(mainScript);
+  }
+
+  return __dirname;
+}
+
 function resolveCalendarQueryScript() {
+  const baseDir = runtimeBaseDir();
   const candidates = [
+    resolve(baseDir, "calendar-query.swift"),
+    resolve(baseDir, "../scripts/calendar-query.swift"),
     resolve(__dirname, "calendar-query.swift"),
     resolve(__dirname, "../scripts/calendar-query.swift")
   ];
