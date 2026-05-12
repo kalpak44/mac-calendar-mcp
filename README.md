@@ -4,7 +4,8 @@ Node.js MCP server for macOS Calendar, backed by a Swift EventKit helper.
 
 ## Purpose
 
-This project is a local MCP server that allows AI assistants to read events from the native macOS Calendar app. It runs entirely on your machine using stdio transport. No data leaves the local system.
+This project is a local MCP server that allows AI assistants to read events from the native macOS Calendar app. It runs
+entirely on your machine using stdio transport. No data leaves the local system.
 
 - List available calendars
 - Get events for a specific date
@@ -20,7 +21,8 @@ This project is a local MCP server that allows AI assistants to read events from
 - Swift 6+ available via the `swift` command
 - Calendar access permission granted to the terminal or the MCP host application
 
-macOS will prompt for Calendar access on first use. You can verify or revoke permissions in **System Settings → Privacy & Security → Calendars**.
+macOS will prompt for Calendar access on first use. You can verify or revoke permissions in **System Settings →
+Privacy & Security → Calendars**.
 
 ## Install
 
@@ -66,13 +68,13 @@ codex mcp remove mac-calendar-mcp
 
 ## Available Tools
 
-| Tool | Description |
-|---|---|
-| `list_calendars` | Returns all calendars available to the local Calendar app |
-| `get_events_by_date` | Returns all events on a given date |
-| `get_events_this_week` | Returns all events in the current calendar week |
-| `get_events_this_month` | Returns all events in the current calendar month |
-| `get_events_in_range` | Returns all events between a start and end date |
+| Tool                    | Description                                               |
+|-------------------------|-----------------------------------------------------------|
+| `list_calendars`        | Returns all calendars available to the local Calendar app |
+| `get_events_by_date`    | Returns all events on a given date                        |
+| `get_events_this_week`  | Returns all events in the current calendar week           |
+| `get_events_this_month` | Returns all events in the current calendar month          |
+| `get_events_in_range`   | Returns all events between a start and end date           |
 
 All event tools accept an optional `calendars` array with calendar names from `list_calendars`.
 
@@ -104,4 +106,5 @@ Show me today's events only from my Work calendar.
 
 ## Privacy
 
-All data is read locally via EventKit through a bundled Swift helper. No network requests are made. No credentials are required. Events are only passed to the MCP client that initiated the request.
+All data is read locally via EventKit through a bundled Swift helper. No network requests are made. No credentials are
+required. Events are only passed to the MCP client that initiated the request.
