@@ -12,17 +12,16 @@ export async function fetchEvents(start, end) {
     cal.calendars().forEach(function(calendar) {
       try {
         var events = calendar.events.whose({
-          _and: [
-            { startDate: { _greaterThanEquals: start } },
-            { startDate: { _lessThanEquals: end } }
-          ]
+          startDate: { _greaterThanEquals: start }
         })();
         events.forEach(function(event) {
           try {
+            var eventStart = event.startDate();
+            if (eventStart > end) return;
             result.push({
               id: event.uid(),
               title: event.summary(),
-              start: event.startDate().toISOString(),
+              start: eventStart.toISOString(),
               end: event.endDate().toISOString(),
               allDay: event.allDayEvent(),
               location: event.location() || null,
