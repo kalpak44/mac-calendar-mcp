@@ -6,10 +6,12 @@ Node.js MCP server for macOS Calendar, backed by a Swift EventKit helper.
 
 This project is a local MCP server that allows AI assistants to read events from the native macOS Calendar app. It runs entirely on your machine using stdio transport. No data leaves the local system.
 
+- List available calendars
 - Get events for a specific date
 - Get events for the current week
 - Get events for the current month
 - Get events within a custom date range
+- Restrict event queries to specific calendars by name
 
 ## Requirements
 
@@ -66,15 +68,22 @@ codex mcp remove mac-calendar-mcp
 
 | Tool | Description |
 |---|---|
+| `list_calendars` | Returns all calendars available to the local Calendar app |
 | `get_events_by_date` | Returns all events on a given date |
 | `get_events_this_week` | Returns all events in the current calendar week |
 | `get_events_this_month` | Returns all events in the current calendar month |
 | `get_events_in_range` | Returns all events between a start and end date |
 
+All event tools accept an optional `calendars` array with calendar names from `list_calendars`.
+
 ## Example Prompts
 
 ```text
 What's on my calendar today?
+```
+
+```text
+List my available calendars.
 ```
 
 ```text
@@ -87,6 +96,10 @@ Show me all my events for May 2026.
 
 ```text
 What meetings do I have between May 15 and May 20?
+```
+
+```text
+Show me today's events only from my Work calendar.
 ```
 
 ## Privacy

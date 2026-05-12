@@ -17,14 +17,17 @@ export function registerGetEventsInRangeTool(server) {
           .describe("Start date in YYYY-MM-DD format"),
         end: z.string()
           .regex(/^\d{4}-\d{2}-\d{2}$/)
-          .describe("End date in YYYY-MM-DD format")
+          .describe("End date in YYYY-MM-DD format"),
+        calendars: z.array(z.string().min(1))
+          .optional()
+          .describe("Optional list of calendar names to search")
       }),
       annotations: { readOnlyHint: true, idempotentHint: true }
     },
-    async ({ start, end }) => {
+    async ({ start, end, calendars = [] }) => {
       const startDate = new Date(`${start}T00:00:00`);
       const endDate = new Date(`${end}T00:00:00`);
-      const events = await fetchEvents(startOfDay(startDate), endOfDay(endDate));
+      const events = await fetchEvents(startOfDay(startDate), endOfDay(endDate), calendars);
       return toResult(events);
     }
   );

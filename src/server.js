@@ -5,6 +5,7 @@ import { registerGetEventsByDateTool } from "./tools/getEventsByDate.js";
 import { registerGetEventsThisWeekTool } from "./tools/getEventsThisWeek.js";
 import { registerGetEventsThisMonthTool } from "./tools/getEventsThisMonth.js";
 import { registerGetEventsInRangeTool } from "./tools/getEventsInRange.js";
+import { registerListCalendarsTool } from "./tools/listCalendars.js";
 
 export function createMcpApp() {
   const server = new McpServer({
@@ -16,6 +17,7 @@ export function createMcpApp() {
   registerGetEventsThisWeekTool(server);
   registerGetEventsThisMonthTool(server);
   registerGetEventsInRangeTool(server);
+  registerListCalendarsTool(server);
 
   return server;
 }

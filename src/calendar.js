@@ -39,17 +39,39 @@ function toIsoOffsetString(date) {
   return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${sign}${offsetHours}:${remainingMinutes}`;
 }
 
-export async function fetchEvents(start, end) {
-  const cappedEnd = new Date(Math.min(end.getTime(), start.getTime() + MAX_RANGE_MS));
+async function invokeCalendarQuery(args) {
   const scriptPath = resolveCalendarQueryScript();
-  const { stdout } = await execFileAsync("swift", [
-    scriptPath,
+
+  try {
+    const { stdout } = await execFileAsync("swift", [scriptPath, ...args], {
+      maxBuffer: 10 * 1024 * 1024
+    });
+    return JSON.parse(stdout.trim());
+  } catch (error) {
+    const details = error?.stderr?.trim() || error?.message || "Unknown error";
+    throw new Error(`Calendar helper failed: ${details}`);
+  }
+}
+
+export async function fetchCalendars() {
+  return invokeCalendarQuery(["list-calendars"]);
+}
+
+export async function fetchEvents(start, end, calendars = []) {
+  const cappedEnd = new Date(Math.min(end.getTime(), start.getTime() + MAX_RANGE_MS));
+  const args = [
+    "events",
     "--start",
     toIsoOffsetString(start),
     "--end",
     toIsoOffsetString(cappedEnd)
-  ]);
-  return JSON.parse(stdout.trim());
+  ];
+
+  for (const calendar of calendars) {
+    args.push("--calendar", calendar);
+  }
+
+  return invokeCalendarQuery(args);
 }
 
 export function toResult(events) {
@@ -63,6 +85,21 @@ export function toResult(events) {
     structuredContent: {
       count: events.length,
       events
+    }
+  };
+}
+
+export function toCalendarsResult(calendars) {
+  return {
+    content: [
+      {
+        type: "text",
+        text: `${calendars.length} calendar${calendars.length === 1 ? "" : "s"}`
+      }
+    ],
+    structuredContent: {
+      count: calendars.length,
+      calendars
     }
   };
 }

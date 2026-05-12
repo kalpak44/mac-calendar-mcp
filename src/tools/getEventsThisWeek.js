@@ -9,13 +9,18 @@ export function registerGetEventsThisWeekTool(server) {
       description:
         "Returns all calendar events for the current week (Monday–Sunday).\n\n" +
         "Examples:\n" +
-        "- All events this week: {}",
-      inputSchema: z.object({}),
+        "- All events this week: {}\n" +
+        '- Work calendar only: { "calendars": ["Work"] }',
+      inputSchema: z.object({
+        calendars: z.array(z.string().min(1))
+          .optional()
+          .describe("Optional list of calendar names to search")
+      }),
       annotations: { readOnlyHint: true }
     },
-    async () => {
+    async ({ calendars = [] }) => {
       const now = new Date();
-      const events = await fetchEvents(startOfWeek(now), endOfWeek(now));
+      const events = await fetchEvents(startOfWeek(now), endOfWeek(now), calendars);
       return toResult(events);
     }
   );

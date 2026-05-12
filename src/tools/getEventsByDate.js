@@ -14,13 +14,16 @@ export function registerGetEventsByDateTool(server) {
       inputSchema: z.object({
         date: z.string()
           .regex(/^\d{4}-\d{2}-\d{2}$/)
-          .describe("Date in YYYY-MM-DD format")
+          .describe("Date in YYYY-MM-DD format"),
+        calendars: z.array(z.string().min(1))
+          .optional()
+          .describe("Optional list of calendar names to search")
       }),
       annotations: { readOnlyHint: true, idempotentHint: true }
     },
-    async ({ date }) => {
+    async ({ date, calendars = [] }) => {
       const d = new Date(`${date}T00:00:00`);
-      const events = await fetchEvents(startOfDay(d), endOfDay(d));
+      const events = await fetchEvents(startOfDay(d), endOfDay(d), calendars);
       return toResult(events);
     }
   );

@@ -9,13 +9,18 @@ export function registerGetEventsThisMonthTool(server) {
       description:
         "Returns all calendar events for the current calendar month.\n\n" +
         "Examples:\n" +
-        "- All events this month: {}",
-      inputSchema: z.object({}),
+        "- All events this month: {}\n" +
+        '- Personal calendar only: { "calendars": ["Personal"] }',
+      inputSchema: z.object({
+        calendars: z.array(z.string().min(1))
+          .optional()
+          .describe("Optional list of calendar names to search")
+      }),
       annotations: { readOnlyHint: true }
     },
-    async () => {
+    async ({ calendars = [] }) => {
       const now = new Date();
-      const events = await fetchEvents(startOfMonth(now), endOfMonth(now));
+      const events = await fetchEvents(startOfMonth(now), endOfMonth(now), calendars);
       return toResult(events);
     }
   );
