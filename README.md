@@ -19,18 +19,41 @@ This project is a local MCP server that allows AI assistants to read events from
 
 macOS will prompt for Calendar access on first use. You can verify or revoke permissions in **System Settings → Privacy & Security → Calendars**.
 
+## Install
+
+Download the latest release into `~/.mcp-servers/mac-calendar-mcp`:
+
+```bash
+mkdir -p ~/.mcp-servers/mac-calendar-mcp && \
+  curl -fsSL https://github.com/kalpak44/mac-calendar-mcp/releases/latest/download/index.js \
+    -o ~/.mcp-servers/mac-calendar-mcp/index.js
+```
+
 ## Add To Claude Code
 
 ```bash
 claude mcp add mac-calendar-mcp \
   --transport stdio \
-  -- node /path/to/mac-calendar-mcp/src/index.js
+  -- node ~/.mcp-servers/mac-calendar-mcp/index.js
 ```
 
 Remove it from Claude Code:
 
 ```bash
 claude mcp remove mac-calendar-mcp
+```
+
+## Add To Codex
+
+```bash
+codex mcp add mac-calendar-mcp \
+  --command "node ~/.mcp-servers/mac-calendar-mcp/index.js"
+```
+
+Remove it from Codex:
+
+```bash
+codex mcp remove mac-calendar-mcp
 ```
 
 ## Configuration (`claude_desktop_config.json`)
@@ -40,7 +63,7 @@ claude mcp remove mac-calendar-mcp
   "mcpServers": {
     "mac-calendar-mcp": {
       "command": "node",
-      "args": ["/path/to/mac-calendar-mcp/src/index.js"]
+      "args": ["/Users/YOUR_USERNAME/.mcp-servers/mac-calendar-mcp/index.js"]
     }
   }
 }
