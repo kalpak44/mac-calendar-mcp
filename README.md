@@ -66,6 +66,21 @@ Remove it from Codex:
 codex mcp remove mac-calendar-mcp
 ```
 
+Check the `--scope user` argument for non-general usage.
+
+```bash
+claude mcp add mac-calendar-mcp \
+  --scope user \
+  --transport stdio \
+  -- node ~/.mcp-servers/mac-calendar-mcp/index.js
+```
+
+```bash
+codex mcp add mac-calendar-mcp \
+  --scope user \
+  --command "node ~/.mcp-servers/mac-calendar-mcp/index.js"
+```
+
 ## Available Tools
 
 | Tool                    | Description                                               |
