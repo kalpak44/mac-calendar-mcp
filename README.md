@@ -65,8 +65,8 @@ Remove it from Codex:
 ```bash
 codex mcp remove mac-calendar-mcp
 ```
-
-Check the `--scope user` argument for non-general usage.
+> [!NOTE]
+> Check the `--scope user` argument for non-general usage.
 
 ```bash
 claude mcp add mac-calendar-mcp \
