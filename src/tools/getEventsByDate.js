@@ -12,10 +12,12 @@ export function registerGetEventsByDateTool(server) {
         '- Events today: { "date": "2026-05-12" }\n' +
         '- Events on a specific day: { "date": "2026-06-01" }',
       inputSchema: z.object({
-        date: z.string()
+        date: z
+          .string()
           .regex(/^\d{4}-\d{2}-\d{2}$/)
           .describe("Date in YYYY-MM-DD format"),
-        calendars: z.array(z.string().min(1))
+        calendars: z
+          .array(z.string().min(1))
           .optional()
           .describe("Optional list of calendar names to search")
       }),

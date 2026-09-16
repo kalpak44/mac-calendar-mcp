@@ -10,13 +10,13 @@ import {
 
 const at = (iso) => new Date(iso);
 const local = (d) =>
-  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
-    d.getDate()
-  ).padStart(2, "0")} ${String(d.getHours()).padStart(2, "0")}:${String(
-    d.getMinutes()
-  ).padStart(2, "0")}:${String(d.getSeconds()).padStart(2, "0")}.${String(
-    d.getMilliseconds()
-  ).padStart(3, "0")}`;
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(
+    2,
+    "0"
+  )} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(
+    2,
+    "0"
+  )}:${String(d.getSeconds()).padStart(2, "0")}.${String(d.getMilliseconds()).padStart(3, "0")}`;
 
 describe("day boundaries", () => {
   test("startOfDay zeroes the clock without moving the date", () => {

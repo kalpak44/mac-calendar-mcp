@@ -65,6 +65,7 @@ Remove it from Codex:
 ```bash
 codex mcp remove mac-calendar-mcp
 ```
+
 > [!NOTE]
 > Check the `--scope user` argument for non-general usage.
 
@@ -84,7 +85,7 @@ codex mcp add mac-calendar-mcp \
 ## Available Tools
 
 | Tool                    | Description                                               |
-|-------------------------|-----------------------------------------------------------|
+| ----------------------- | --------------------------------------------------------- |
 | `list_calendars`        | Returns all calendars available to the local Calendar app |
 | `get_events_by_date`    | Returns all events on a given date                        |
 | `get_events_this_week`  | Returns all events in the current calendar week           |

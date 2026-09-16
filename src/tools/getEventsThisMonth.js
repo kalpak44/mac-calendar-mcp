@@ -12,7 +12,8 @@ export function registerGetEventsThisMonthTool(server) {
         "- All events this month: {}\n" +
         '- Personal calendar only: { "calendars": ["Personal"] }',
       inputSchema: z.object({
-        calendars: z.array(z.string().min(1))
+        calendars: z
+          .array(z.string().min(1))
           .optional()
           .describe("Optional list of calendar names to search")
       }),

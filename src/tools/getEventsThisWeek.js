@@ -12,7 +12,8 @@ export function registerGetEventsThisWeekTool(server) {
         "- All events this week: {}\n" +
         '- Work calendar only: { "calendars": ["Work"] }',
       inputSchema: z.object({
-        calendars: z.array(z.string().min(1))
+        calendars: z
+          .array(z.string().min(1))
           .optional()
           .describe("Optional list of calendar names to search")
       }),

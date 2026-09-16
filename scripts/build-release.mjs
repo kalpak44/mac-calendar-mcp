@@ -19,11 +19,10 @@ function ensureFile(path) {
 rmSync(distDir, { recursive: true, force: true });
 rmSync(releaseDir, { recursive: true, force: true });
 
-execFileSync(
-  process.execPath,
-  [resolve(root, "node_modules/webpack/bin/webpack.js")],
-  { cwd: root, stdio: "inherit" }
-);
+execFileSync(process.execPath, [resolve(root, "node_modules/webpack/bin/webpack.js")], {
+  cwd: root,
+  stdio: "inherit"
+});
 
 mkdirSync(bundleDir, { recursive: true });
 
@@ -35,8 +34,4 @@ cpSync(resolve(distDir, "index.js"), resolve(bundleDir, "index.js"));
 cpSync(resolve(root, "scripts/calendar-query.swift"), resolve(bundleDir, "calendar-query.swift"));
 cpSync(resolve(root, "README.md"), resolve(bundleDir, "README.md"));
 
-execFileSync(
-  "zip",
-  ["-r", zipPath, "mac-calendar-mcp"],
-  { cwd: releaseDir, stdio: "inherit" }
-);
+execFileSync("zip", ["-r", zipPath, "mac-calendar-mcp"], { cwd: releaseDir, stdio: "inherit" });

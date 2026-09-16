@@ -7,9 +7,8 @@ jest.unstable_mockModule("node:child_process", () => ({
   default: { execFile: mock.execFile }
 }));
 
-const { fetchCalendars, fetchEvents, toCalendarsResult, toResult } = await import(
-  "../src/calendar.js"
-);
+const { fetchCalendars, fetchEvents, toCalendarsResult, toResult } =
+  await import("../src/calendar.js");
 
 const valueOf = (args, flag) => args[args.indexOf(flag) + 1];
 const dayOf = (stamp) => stamp.slice(0, 10);
@@ -70,7 +69,9 @@ describe("fetchEvents argument building", () => {
     await fetchEvents(new Date("2026-05-12T00:00:00"), new Date("2026-05-12T23:59:59"));
     const args = mock.lastArgs();
     expect(args[1]).toBe("events");
-    expect(valueOf(args, "--start")).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}$/);
+    expect(valueOf(args, "--start")).toMatch(
+      /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}$/
+    );
     expect(dayOf(valueOf(args, "--start"))).toBe("2026-05-12");
     expect(dayOf(valueOf(args, "--end"))).toBe("2026-05-12");
   });
