@@ -67,6 +67,14 @@ jobs:
             echo "Pull request — verified only." >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
+          # Second guard on the version commit. `[skip ci]` in its message already stops
+          # the run starting; this catches it if that is ever dropped, because the failure
+          # is a bump loop that never settles rather than a job that fails once.
+          if git log -1 --pretty=%s | grep -q '^chore: release v'; then
+            echo "release=false" >> "$GITHUB_OUTPUT"
+            echo "Version commit — nothing to release." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
           changed=$(git diff --name-only HEAD~1 HEAD || true)
           if echo "$changed" | grep -qvE '^(\.github/|README\.md$|\.gitignore$)'; then
             echo "release=true" >> "$GITHUB_OUTPUT"
@@ -128,8 +136,12 @@ jobs:
           git config user.name "homelab-infra"
           git config user.email "homelab-infra@users.noreply.github.com"
           git add package.json package-lock.json
-          git commit -m "chore: release v${next}"
-          git tag "v${next}"
+          # [skip ci]: this commit is a push to main that changes package.json, so
+          # without it the gate below re-fires and bumps the version again, for ever.
+          git commit -m "chore: release v${next} [skip ci]"
+          # Annotated, because `git push --follow-tags` silently ignores a lightweight
+          # tag and the release job then cannot check the tag out.
+          git tag -a "v${next}" -m "v${next}"
           git push origin HEAD:main --follow-tags
 
           echo "version=${next}" >> "$GITHUB_OUTPUT"
