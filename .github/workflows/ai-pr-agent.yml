@@ -58,8 +58,10 @@ jobs:
       SONAR_PROJECT_KEY: ${{ vars.SONAR_PROJECT_KEY }}
       SONAR_ORGANIZATION: ${{ vars.SONAR_ORGANIZATION }}
       # Where the agent records the release it wants cut. A file, not stdout: the step
-      # after this one is bash, and it must not have to parse prose.
-      BUMP_FILE: ${{ runner.temp }}/bump.json
+      # after this one is bash, and it must not have to parse prose. A literal path, not
+      # `runner.temp`: the runner context is not available in a job-level env block, and
+      # using it there makes the whole workflow unparseable.
+      BUMP_FILE: /tmp/bump.json
 
     steps:
       - name: Checkout repository
