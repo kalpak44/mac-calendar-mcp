@@ -17,7 +17,7 @@ entirely on your machine using stdio transport. No data leaves the local system.
 ## Requirements
 
 - macOS with Calendar app configured
-- Node.js 20+
+- Node.js 24+
 - Swift 6+ available via the `swift` command
 - Calendar access permission granted to the terminal or the MCP host application
 
