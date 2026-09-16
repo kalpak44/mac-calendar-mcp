@@ -8,10 +8,11 @@
   "scripts": {
     "build": "node scripts/build-release.mjs",
     "start": "node src/index.js",
-    "dev": "node --watch src/index.js"
+    "dev": "node --watch src/index.js",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "engines": {
-    "node": ">=20.0.0",
+    "node": ">=24.0.0",
     "swift": ">=6.0.0"
   },
   "dependencies": {
@@ -19,6 +20,7 @@
     "zod": "4.5.4"
   },
   "devDependencies": {
+    "jest": "^30.5.1",
     "webpack": "^5.110.3",
     "webpack-cli": "^7.2.3"
   }
