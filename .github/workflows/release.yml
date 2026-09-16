@@ -76,7 +76,9 @@ jobs:
             exit 0
           fi
           changed=$(git diff --name-only HEAD~1 HEAD || true)
-          if echo "$changed" | grep -qvE '^(\.github/|README\.md$|\.gitignore$)'; then
+          # README.md is not listed: build-release.mjs copies it into the zip, so a
+          # README fix that never cut a release would never reach a downloaded bundle.
+          if echo "$changed" | grep -qvE '^(\.github/|\.gitignore$)'; then
             echo "release=true" >> "$GITHUB_OUTPUT"
           else
             echo "release=false" >> "$GITHUB_OUTPUT"
