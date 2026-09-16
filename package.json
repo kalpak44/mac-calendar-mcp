@@ -1,6 +1,6 @@
 {
   "name": "mac-calendar-mcp",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "license": "MIT",
   "description": "Local MCP server for reading events from macOS Calendar",
   "type": "module",
