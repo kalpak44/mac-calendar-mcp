@@ -20,9 +20,16 @@ on:
   schedule:
     - cron: "0 6 * * *" # 06:00 UTC daily
   workflow_dispatch:
-  # No `workflows` filter, so every pipeline in the repository wakes the agent and adding
-  # one needs no edit here. triage is what narrows it back down, before a runner starts.
+  # By display name — `workflows` takes no wildcard and omitting it makes the file
+  # unparseable, so every pipeline that may wake the agent is named here and a name no
+  # workflow in this repository uses simply never matches. This workflow is deliberately
+  # absent: a failed repair must not trigger another one.
   workflow_run:
+    workflows:
+      - "Build, Publish, Deploy"
+      - "Verify, Publish, Deploy"
+      - "Release"
+      - "AI Issue Resolver Agent"
     types: [completed]
 
 # Least privilege by default; the job that needs to write widens it itself. A grant made
@@ -42,15 +49,12 @@ jobs:
   # there was not. Also the loop brake: the agent pushes with a PAT, so its own fixes start
   # pipeline runs, and a fix that does not work would otherwise wake it again for ever.
   triage:
-    # What the missing `workflows` filter hands over: comparing the names is the
-    # self-exclusion, since a failed repair must not trigger another one. The path test
-    # drops what GitHub generates dynamically — Dependabot Updates, Pages, code scanning —
-    # which is infrastructure the agent is instructed not to touch. A green run reaches the
-    # step below only from a pull request, where a passing check is what unblocks a merge.
+    # The self-exclusion: the agent is absent from the trigger list above, and comparing
+    # the names keeps that true if the list is ever widened. A green run gets through only
+    # from a pull request, where a passing check is what unblocks a merge.
     if: >-
       github.event_name != 'workflow_run' ||
       (github.event.workflow_run.name != github.workflow &&
-      startsWith(github.event.workflow_run.path, '.github/workflows/') &&
       (github.event.workflow_run.conclusion == 'failure' ||
       github.event.workflow_run.conclusion == 'timed_out' ||
       (github.event.workflow_run.conclusion == 'success' &&
